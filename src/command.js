@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import program from 'commander' ;
 
 program
@@ -8,9 +10,9 @@ program
   .command('build')
   .description('build your project')
   .action(require('./build'))
-  .option('f, --from')
-  .option('t, --target')
-  .option('o, --output')
+  .option('-f, --from <from>')
+  .option('-t, --target <target>')
+  .option('-o, --output <output>');
 
 
 program.parse(process.argv);

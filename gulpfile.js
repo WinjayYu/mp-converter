@@ -30,7 +30,7 @@ const filelog = (title) => {
   });
 }
 
-// gulp.task("build", ['lec'], () => {
+// gulp.task("build", ['lec'], ()fsevents  => {
 //   return gulp.src(scripts)
 //     .pipe(plumber({ errorHandler (err) { gutil.log(err.message + '\r\n' + err.codeFrame); }}))
 //     .pipe(newer({map: mapToDest}))
