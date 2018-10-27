@@ -28,8 +28,8 @@ mpc build [options]
 | 可选参数 | 可选参数全称   | 值                             |
 | ---- | -------- | ----------------------------- |
 | -t  | --target | 目标小程序，可选值'wx', 'baidu', 'ant' |
-| -f  | --from   | 原程小程序，可选值'wx', 'baidu', 'ant' |
-| -o  | --output | 删除文件夹                         |
+| -f  | --from   | 原小程序，可选值'wx', 'baidu', 'ant' |
+| -o  | --output | 目标文件夹                         |
 
 mp-converter会优先使用命令行参数，如果没有则会在项目根目录下面寻找mpc.config.js配置文件，mpc.config.js写法如下：
 
