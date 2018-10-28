@@ -1,4 +1,4 @@
-const gulpfile = require('gulp');
+const gulp = require('gulp');
 const lec = require('gulp-line-ending-corrector');
 const gutil = require("gulp-util");
 const newer = require('gulp-newer');
@@ -30,17 +30,9 @@ const filelog = (title) => {
   });
 }
 
-// gulp.task("build", ['lec'], ()fsevents  => {
-//   return gulp.src(scripts)
-//     .pipe(plumber({ errorHandler (err) { gutil.log(err.message + '\r\n' + err.codeFrame); }}))
-//     .pipe(newer({map: mapToDest}))
-//     .pipe(filelog('Compile'))
-//     .pipe(babel())
-//     .pipe(gulp.dest(dest));
-// });
 
-gulpfile.task("build-watch", () => {
-  return gulpfile.src(scripts)
+gulp.task("build", () => {
+  return gulp.src(scripts)
     .pipe(plumber({ errorHandler (err) { gutil.log(err.message + '\r\n' + err.codeFrame); }}))
     .pipe(through.obj(function (file, enc, callback) {
       file._path = file.path;
@@ -50,10 +42,9 @@ gulpfile.task("build-watch", () => {
     .pipe(newer(dest))
     .pipe(filelog('Compile'))
     .pipe(babel())
-    .pipe(gulpfile.dest(dest));
+    .pipe(gulp.dest(dest));
 });
 
-gulpfile.task("watch", ['build-watch'], (callback) => {
-  watch(scripts, {debounceDelay: 200}, () => gulpfile.start("build-watch"));
-  // watch(copyFiles, {debounceDelay: 200}, () => gulp.start("copy"));
+gulp.task("watch", ['build'], (callback) => {
+  watch(scripts, {debounceDelay: 200}, () => gulp.start("build"));
 });
