@@ -41,24 +41,81 @@ export default class Compile {
     }
 
     compile(opath) {
+        let filePath = path.join(opath.dir, opath.base);
+        let targetPath = path.normalize(cache.getOutputDir() + filePath.replace(currentDir, ''));
+
+        let outInfo = { filePath, targetPath };
         switch (opath.ext) {
             case '.js':
-                this.compileJs(opath)
+                this.compileJs(outInfo);
+                break;
+            case '.json':
+                this.compileJson(outInfo);
+                break;
+            case '.wxss':
+            case '.css':
+            case '.acss':
+                this.compileCss(outInfo);
+                break;
+            case '.wxml':
+            case '.axml':
+            case '.swan':
+                this.compileXml(outInfo);
                 break;
         }
     }
 
-    compileJs(opath) {
+    compileJs(outInfo) {
         let from = cache.getOriginMptype();
-        let originNamespace = from === 'wx' ? 'wx' : target === 'baidu' ? 'swan' : 'my';
-        let target = cache.getTargetMpType();
-        let targetNamespace = target === 'wx' ? 'wx' : target === 'baidu' ? 'swan' : 'my';
+        let originNamespace = utils.getNamespace(from);
 
-        let filepath = path.join(opath.dir, opath.base)
-        console.log('读取 ' + filepath);
-        let code = fs.readFileSync(filepath, 'utf8')
+        let target = cache.getTargetMpType();
+        let targetNamespace = utils.getNamespace(target);
+
+        let { filePath, targetPath } = outInfo;
+        console.log('读取 ' + filePath);
+        let code = fs.readFileSync(filePath, 'utf8');
         code = code.replace(new RegExp('\\b' + originNamespace + '\\b', 'g'), targetNamespace);
-        let targetPath = path.normalize(cache.getOutputDir() + filepath.replace(currentDir, ''));
+        console.log('写入 ' + targetPath);
+        mkdirp.sync(getDirName(targetPath));
+        fs.writeFileSync(targetPath, code, 'utf8');
+    }
+
+    compileJson(outInfo) {
+        let { filePath, targetPath } = outInfo;
+        console.log('读取 ' + filePath);
+        let code = fs.readFileSync(filePath, 'utf8');
+        console.log('写入 ' + targetPath);
+        mkdirp.sync(getDirName(targetPath));
+        fs.writeFileSync(targetPath, code, 'utf8');
+    }
+
+    compileCss(outInfo) {
+        let target = cache.getTargetMpType();
+        let targetNameSuffix = utils.getCssSuffix(target)
+
+        let { filePath, targetPath } = outInfo;
+        targetPath = targetPath.replace(new RegExp(path.extname(filePath)), targetNameSuffix);
+        console.log('读取 ' + filePath);
+        let code = fs.readFileSync(filePath, 'utf8');
+        console.log('写入 ' + targetPath);
+        mkdirp.sync(getDirName(targetPath));
+        fs.writeFileSync(targetPath, code, 'utf8');
+    }
+
+    compileXml(outInfo) {
+        let from = cache.getOriginMptype();
+        let originNamespace = utils.getNamespace(from);
+        let target = cache.getTargetMpType();
+        let targetNamespace = utils.getNamespace(target);
+        let targetNameSuffix = utils.getNamespace(target);
+
+        let { filePath, targetPath } = outInfo;
+        targetPath = targetPath.replace(new RegExp(path.extname(filePath)), targetNameSuffix);
+
+        console.log('读取 ' + filePath);
+        let code = fs.readFileSync(filePath, 'utf8');
+        code = code.replace(new RegExp(originNamespace, 'g'), targetNamespace);
         console.log('写入 ' + targetPath);
         mkdirp.sync(getDirName(targetPath));
         fs.writeFileSync(targetPath, code, 'utf8');
